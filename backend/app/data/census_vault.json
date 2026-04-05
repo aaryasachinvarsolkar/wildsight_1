@@ -1,0 +1,209 @@
+[
+  {
+    "species_name": "Nilgiri Tahr",
+    "aliases": ["Hemitragus hylocrius", "Tahr", "Nilgiri ibex", "Hemitragus"],
+    "scientific_name": "Nilgiritragus hylocrius",
+    "national_census": 2668,
+    "census_year": 2025,
+    "source": "Kerala-Tamil Nadu Joint Census",
+    "status": "Endangered"
+  },
+  {
+    "species_name": "Bengal Tiger",
+    "aliases": ["Tiger", "Royal Bengal Tiger", "Panthera tigris"],
+    "scientific_name": "Panthera tigris tigris",
+    "national_census": 3682,
+    "census_year": 2022,
+    "source": "WII All India Tiger Estimation",
+    "status": "Endangered"
+  },
+  {
+    "species_name": "Indian Elephant",
+    "aliases": ["Elephant", "Asian Elephant", "Elephas maximus"],
+    "scientific_name": "Elephas maximus indicus",
+    "national_census": 22446,
+    "census_year": 2025,
+    "source": "Project Elephant DNA-Based Census",
+    "status": "Endangered"
+  },
+  {
+    "species_name": "Indian Leopard",
+    "aliases": ["Leopard", "Panthera pardus", "Indian Panther", "Leopardus"],
+    "scientific_name": "Panthera pardus fusca",
+    "national_census": 13874,
+    "census_year": 2022,
+    "source": "Status of Leopards in India 2022",
+    "status": "Vulnerable"
+  },
+  {
+    "species_name": "Asiatic Lion",
+    "aliases": ["Lion", "Indian Lion", "Gir Lion", "Panthera leo"],
+    "scientific_name": "Panthera leo persica",
+    "national_census": 712,
+    "census_year": 2024,
+    "source": "Gujarat State Forest Dept Estimate",
+    "status": "Critically Endangered"
+  },
+  {
+    "species_name": "Snow Leopard",
+    "aliases": ["Uncia uncia", "Irbis", "Mountain Ghost"],
+    "scientific_name": "Panthera uncia",
+    "national_census": 718,
+    "census_year": 2024,
+    "source": "SPAI Survey",
+    "status": "Vulnerable"
+  },
+  {
+    "species_name": "Greater One-horned Rhino",
+    "aliases": ["Rhino", "Indian Rhinoceros", "One-horned Rhino"],
+    "scientific_name": "Rhinoceros unicornis",
+    "national_census": 3323,
+    "census_year": 2025,
+    "source": "State of the Rhino Report",
+    "status": "Vulnerable"
+  },
+  {
+    "species_name": "Sloth Bear",
+    "aliases": ["Bear", "Indian Bear", "Melursus ursinus"],
+    "scientific_name": "Melursus ursinus",
+    "national_census": 20000,
+    "census_year": 2023,
+    "source": "Wildlife Institute of India Baseline",
+    "status": "Vulnerable"
+  },
+  {
+    "species_name": "Gaur",
+    "aliases": ["Indian Bison", "Bison", "Bos gaurus"],
+    "scientific_name": "Bos gaurus",
+    "national_census": 30000,
+    "census_year": 2023,
+    "source": "IUCN / WII Estimation",
+    "status": "Vulnerable"
+  },
+  {
+    "species_name": "Chital",
+    "aliases": ["Spotted Deer", "Axis axis", "Deer"],
+    "scientific_name": "Axis axis",
+    "national_census": 2500000,
+    "census_year": 2023,
+    "source": "Scientific Baseline Estimate",
+    "status": "Least Concern"
+  },
+  {
+    "species_name": "Sambar Deer",
+    "aliases": ["Sambar", "Rusa unicolor", "Large Deer"],
+    "scientific_name": "Rusa unicolor",
+    "national_census": 200000,
+    "census_year": 2024,
+    "source": "Scientific Baseline Estimate",
+    "status": "Vulnerable"
+  },
+  {
+    "species_name": "Blackbuck",
+    "aliases": ["Antelope", "Indian Antelope", "Antilope cervicapra"],
+    "scientific_name": "Antilope cervicapra",
+    "national_census": 150000,
+    "census_year": 2024,
+    "source": "Status Report on Indian Antelope",
+    "status": "Least Concern"
+  },
+  {
+    "species_name": "Nilgai",
+    "aliases": ["Blue Bull", "Boselaphus tragocamelus"],
+    "scientific_name": "Boselaphus tragocamelus",
+    "national_census": 1000000,
+    "census_year": 2024,
+    "source": "Widespread Baseline Estimate",
+    "status": "Least Concern"
+  },
+  {
+    "species_name": "Wild Boar",
+    "aliases": ["Indian Boar", "Boar", "Sus scrofa cristatus"],
+    "scientific_name": "Sus scrofa",
+    "national_census": 2500000,
+    "census_year": 2021,
+    "source": "Scientific Baseline Estimate",
+    "status": "Least Concern"
+  },
+  {
+    "species_name": "Indian Peafowl",
+    "aliases": ["Peacock", "Peafowl", "National Bird of India"],
+    "scientific_name": "Pavo cristatus",
+    "national_census": 5000000,
+    "census_year": 2023,
+    "source": "Basing Estimate",
+    "status": "Least Concern"
+  },
+  {
+    "species_name": "Indian Wolf",
+    "aliases": ["Wolf", "Canis lupus pallipes"],
+    "scientific_name": "Canis lupus pallipes",
+    "national_census": 3100,
+    "census_year": 2023,
+    "source": "WII Status Survey",
+    "status": "Endangered"
+  },
+  {
+    "species_name": "Dhole",
+    "aliases": ["Indian Wild Dog", "Wild Dog", "Cuon alpinus"],
+    "scientific_name": "Cuon alpinus",
+    "national_census": 2500,
+    "census_year": 2023,
+    "source": "Status Survey of Asiatic Wild Dog",
+    "status": "Endangered"
+  },
+  {
+    "species_name": "Gharial",
+    "aliases": ["Gavial", "Fish-eating Crocodile", "Gavialis gangeticus"],
+    "scientific_name": "Gavialis gangeticus",
+    "national_census": 650,
+    "census_year": 2024,
+    "source": "Chambal River Sanctuary Report",
+    "status": "Critically Endangered"
+  },
+  {
+    "species_name": "Mugger Crocodile",
+    "aliases": ["Mugger", "Freshwater Crocodile", "Crocodylus palustris"],
+    "scientific_name": "Crocodylus palustris",
+    "national_census": 10000,
+    "census_year": 2024,
+    "source": "Scientific Baseline Estimate",
+    "status": "Vulnerable"
+  },
+  {
+    "species_name": "Ganges River Dolphin",
+    "aliases": ["Susu", "River Dolphin", "Platanista gangetica"],
+    "scientific_name": "Platanista gangetica gangetica",
+    "national_census": 3500,
+    "census_year": 2024,
+    "source": "Project Dolphin Status Report",
+    "status": "Endangered"
+  },
+  {
+    "species_name": "Rhesus Macaque",
+    "aliases": ["Monkey", "Macaque", "Bandar"],
+    "scientific_name": "Macaca mulatta",
+    "national_census": 3000000,
+    "census_year": 2021,
+    "source": "WII Estimate",
+    "status": "Least Concern"
+  },
+  {
+    "species_name": "Common Myna",
+    "aliases": ["Myna", "Indian Myna"],
+    "scientific_name": "Acridotheres tristis",
+    "national_census": 150000000,
+    "census_year": 2024,
+    "source": "Widespread Baseline Estimate",
+    "status": "Least Concern"
+  },
+  {
+    "species_name": "House Sparrow",
+    "aliases": ["Sparrow", "Gauraiya"],
+    "scientific_name": "Passer domesticus",
+    "national_census": 25000000,
+    "census_year": 2022,
+    "source": "State of India's Birds 2023",
+    "status": "Least Concern"
+  }
+]
