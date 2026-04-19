@@ -153,7 +153,7 @@ async def get_species_intelligence(
             "conservation_plan": [action.dict() for action in actions]
         }
         
-        print(f"DEBUG: Total Intelligence Prep took {time.time() - start_time:.2f}s")
+        print(f"DEBUG: Total Intelligence Prep took {time.time() - start_time:.2f}s for {species_name}")
         return sanitize_response(response_data)
     except HTTPException as he:
         # Re-raise HTTP exceptions so they propagate as intended (e.g. 404)

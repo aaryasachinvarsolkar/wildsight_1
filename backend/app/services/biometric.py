@@ -102,7 +102,9 @@ class BiometricService:
 
         for name in name_checks:
             if name in self.iconic_map:
-                anchor_key = self.iconic_map[name].lower()
+                val = self.iconic_map[name]
+                anchor_key = (val.lower() if val else "")
+                print(f"DEBUG: Iconic Map Match: '{name}' -> '{anchor_key}'")
                 if anchor_key in self.census_vault:
                     return self.census_vault[anchor_key]
 
@@ -364,7 +366,7 @@ class BiometricService:
         """
         key, corrected_name, meta = self._resolve_name_smart(species_name)
         if not key:
-            return [], species_name, {}
+            return [], species_name, {}, None
             
         # Check Occurrence Cache
         if key in self.occurrence_cache:
@@ -425,9 +427,9 @@ class BiometricService:
             "fire": 0.5       # Forest Fire
         }
         
-        kingdom = meta.get("kingdom", "").lower()
-        phylum = meta.get("phylum", "").lower()
-        clazz = meta.get("class", "").lower()
+        kingdom = (meta.get("kingdom") or "").lower()
+        phylum = (meta.get("phylum") or "").lower()
+        clazz = (meta.get("class") or "").lower()
         
         # 1. AMPHIBIANS (The Canaries in the Coal Mine)
         if "amphibia" in clazz:
@@ -482,8 +484,8 @@ class BiometricService:
             {"lat": 30.73, "lon": 78.06, "name": "Himalayan Foothills"}
         ]
         
-        kingdom = meta.get("kingdom", "").lower()
-        clazz = meta.get("class", "").lower()
+        kingdom = (meta.get("kingdom") or "").lower()
+        clazz = (meta.get("class") or "").lower()
 
         # Simple logic to pick likely biomes
         target_biomes = biomes
@@ -624,9 +626,9 @@ class BiometricService:
         Calculates estimate based on actual GBIF sightings + Real-Time Environment (NDVI, HDI, Climate).
         """
         taxonomy = taxonomy or {}
-        kingdom = taxonomy.get("kingdom", "").lower()
-        bio_class = taxonomy.get("class", "").lower()
-        order = taxonomy.get("order", "").lower()
+        kingdom = (taxonomy.get("kingdom") or "").lower()
+        bio_class = (taxonomy.get("class") or "").lower()
+        order = (taxonomy.get("order") or "").lower()
         
         # 1. Identification Error Rate (Taxonomic Complexity)
         id_error_rate = 0.1 # Default 10%
@@ -897,6 +899,7 @@ class BiometricService:
         
         # Resolve Once
         checkpoints, final_name, meta, species_key = self._fetch_from_gbif(clean_name)
+        print(f"DEBUG: Biometric Resolve - Final Name: {final_name}, Key: {species_key}, Meta Keys: {list(meta.keys()) if meta else 'None'}")
         
         if not final_name:
              # Try search input as fallback
@@ -930,8 +933,8 @@ class BiometricService:
         traits = local_data.get("traits", ["organism"]) # Simplified for diff
         if not traits and meta:
              # Universal Trait Logic
-             kingdom = meta.get("kingdom", "").lower()
-             phylum = meta.get("phylum", "").lower()
+             kingdom = (meta.get("kingdom") or "").lower()
+             phylum = (meta.get("phylum") or "").lower()
              
              if "plantae" in kingdom:
                  traits = ["flora", "stationary", "carbon_sink"]
@@ -939,9 +942,9 @@ class BiometricService:
                  traits = ["fauna", "mobile"]
                  if "chordata" in phylum: # Vertebrates
                      traits.append("vertebrate")
-                     if "mammalia" in meta.get("class", "").lower():
+                     if "mammalia" in (meta.get("class") or "").lower():
                          traits.append("mammal")
-                     elif "aves" in meta.get("class", "").lower():
+                     elif "aves" in (meta.get("class") or "").lower():
                          traits.append("avian")
                  else:
                      traits.append("invertebrate")
@@ -1016,10 +1019,10 @@ class BiometricService:
             "traits": traits,
             "sensitivities": final_sensitivities,
             "biological_traits": {
-                "kingdom": meta.get("kingdom", "").lower(),
-                "phylum": meta.get("phylum", "").lower(),
-                "class": meta.get("class", "").lower(),
-                "order": meta.get("order", "").lower()
+                "kingdom": (meta.get("kingdom") or "").lower(),
+                "phylum": (meta.get("phylum") or "").lower(),
+                "class": (meta.get("class") or "").lower(),
+                "order": (meta.get("order") or "").lower()
             }
         }
         self.data_cache[cache_key] = res

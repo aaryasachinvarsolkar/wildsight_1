@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
 import UserProfile from './UserProfile';
+import PipelinePage from './PipelinePage';
 import axios from 'axios';
-import { MapContainer, TileLayer, Marker, Popup, CircleMarker, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, CircleMarker, Rectangle, Tooltip as LeafletTooltip, useMap } from 'react-leaflet';
 import { Line, Bar } from 'react-chartjs-2';
 import {
   Search,
@@ -87,6 +88,10 @@ function Dashboard() {
     const saved = localStorage.getItem('wsTheme');
     return saved ? saved === 'dark' : true;
   });
+
+  const [isPipelineVisible, setIsPipelineVisible] = useState(false);
+  const [pipelineData, setPipelineData] = useState({ ndvi: [], gbif: [] });
+
 
   useEffect(() => {
     localStorage.setItem('wsTheme', isDark ? 'dark' : 'light');
@@ -226,9 +231,15 @@ function Dashboard() {
 
       setActiveSpecies(uiData);
       setSpeciesName(speciesData.species_name);
+      
+      // Auto-hide pipeline on species change
+      setIsPipelineVisible(false);
 
     } catch (err) {
-      console.error(err);
+      console.error("API Fetch Error Detail:", err);
+      if (err.response) {
+        console.error("Payload:", err.response.data);
+      }
       setError(err.message);
       setActiveSpecies(null);
     } finally {
@@ -434,6 +445,55 @@ function Dashboard() {
       setEmailing(false);
     }
   };
+
+  const simulatePipeline = () => {
+    if (!activeSpecies) return;
+    
+    setIsPipelineVisible(true);
+    const { lat, lon } = activeSpecies.location;
+    
+    // Simulate NDVI Grid (10x10 squares around center)
+    const gridSize = 10;
+    const step = 0.005; // ~500m per step
+    const ndviGrid = [];
+    
+    // Base NDVI from environment data or default
+    const baseNdvi = activeSpecies.analysis?.vegetation?.ndvi[0] || 0.6;
+    
+    for (let i = -gridSize/2; i < gridSize/2; i++) {
+      for (let j = -gridSize/2; j < gridSize/2; j++) {
+        const cellLat = lat + i * step;
+        const cellLon = lon + j * step;
+        // Add random variance based on species status (endangered = sparser/lower)
+        const variance = (Math.random() - 0.5) * 0.4;
+        const statusModifier = activeSpecies.status.includes('Endangered') ? -0.2 : 0.1;
+        const value = Math.max(0.1, Math.min(0.9, baseNdvi + variance + statusModifier));
+        
+        ndviGrid.push({
+          bounds: [
+            [cellLat, cellLon],
+            [cellLat + step, cellLon + step]
+          ],
+          value: value.toFixed(2)
+        });
+      }
+    }
+    
+    // Simulate GBIF Spotting (Scatter points)
+    const gbifPoints = [];
+    const pointCount = activeSpecies.status.includes('Endangered') ? 5 : 15;
+    for (let k = 0; k < pointCount; k++) {
+      gbifPoints.push({
+        lat: lat + (Math.random() - 0.5) * step * gridSize,
+        lon: lon + (Math.random() - 0.5) * step * gridSize,
+        name: activeSpecies.name,
+        timestamp: new Date(Date.now() - Math.random() * 86400000 * 30).toLocaleDateString()
+      });
+    }
+    
+    setPipelineData({ ndvi: ndviGrid, gbif: gbifPoints });
+  };
+
 
   useEffect(() => {
     // We don't load anything automatically anymore to allow the landing page to show
@@ -1055,8 +1115,21 @@ function Dashboard() {
                 <div className={`text-2xl font-black ${theme.title}`}>
                   {activeSpecies.checkpoints.length} <span className="text-xs text-emerald-500 uppercase tracking-widest ml-1">Nodes Active</span>
                 </div>
+                
+                <button 
+                  onClick={() => isPipelineVisible ? setIsPipelineVisible(false) : simulatePipeline()}
+                  className={`mt-4 w-full py-3 px-4 rounded-2xl flex items-center justify-center gap-2 font-black text-xs uppercase tracking-[0.2em] transition-all shadow-lg ${
+                    isPipelineVisible 
+                    ? 'bg-rose-500 text-white shadow-rose-500/20' 
+                    : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-500/20'
+                  }`}
+                >
+                  <BrainCircuit size={16} />
+                  {isPipelineVisible ? 'HIDE PIPELINE' : 'VISUALIZE PIPELINE'}
+                </button>
               </div>
             </div>
+
 
             <MapContainer center={[activeSpecies.location.lat, activeSpecies.location.lon]} zoom={activeSpecies.location.zoom} style={{ height: '100%', width: '100%', background: isDark ? '#020617' : '#f8fafc' }} zoomControl={false}>
               <TileLayer
@@ -1106,7 +1179,63 @@ function Dashboard() {
                   </Popup>
                 </Marker>
               ))}
+
+              {/* PIPELINE VISUALIZATION LAYER */}
+              {isPipelineVisible && (
+                <>
+                  {/* NDVI Grid */}
+                  {pipelineData.ndvi.map((cell, idx) => (
+                    <Rectangle
+                      key={`ndvi-${idx}`}
+                      bounds={cell.bounds}
+                      pathOptions={{
+                        fillColor: cell.value > 0.7 ? '#14532d' : cell.value > 0.5 ? '#16a34a' : cell.value > 0.3 ? '#84cc16' : '#92400e',
+                        fillOpacity: 0.6,
+                        weight: 1,
+                        color: 'white',
+                        opacity: 0.1
+                      }}
+                    >
+                      <LeafletTooltip permanent={false} direction="center" className="ndvi-tooltip">
+                        <div className="p-2 bg-slate-900 text-white rounded-lg shadow-xl border border-slate-700">
+                          <div className="text-[10px] font-black uppercase tracking-widest text-emerald-400 mb-1">Spectral Reading</div>
+                          <div className="text-xl font-black">NDVI: {cell.value}</div>
+                        </div>
+                      </LeafletTooltip>
+                    </Rectangle>
+                  ))}
+
+                  {/* GBIF Spotting */}
+                  {pipelineData.gbif.map((pt, idx) => (
+                    <CircleMarker
+                      key={`gbif-${idx}`}
+                      center={[pt.lat, pt.lon]}
+                      radius={12}
+                      pathOptions={{
+                        fillColor: '#f43f5e',
+                        fillOpacity: 0.8,
+                        color: 'white',
+                        weight: 2,
+                        dashArray: '5, 5'
+                      }}
+                    >
+                      <LeafletTooltip direction="top" className="gbif-tooltip">
+                        <div className="p-3 bg-slate-900 text-white rounded-2xl shadow-2xl border border-rose-500/30">
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></div>
+                            <span className="text-[10px] font-black uppercase tracking-widest text-rose-400">GBIF OCCURRENCE</span>
+                          </div>
+                          <div className="text-sm font-black text-white">{pt.name}</div>
+                          <div className="text-[9px] text-slate-400 font-bold mt-1 uppercase tracking-tight">Verified: {pt.timestamp}</div>
+                          <div className="text-[9px] text-slate-500 font-mono mt-0.5">{pt.lat.toFixed(4)}, {pt.lon.toFixed(4)}</div>
+                        </div>
+                      </LeafletTooltip>
+                    </CircleMarker>
+                  ))}
+                </>
+              )}
             </MapContainer>
+
           </div>
 
           {/* RIGHT: SPECIES CARD */}
@@ -1122,9 +1251,17 @@ function Dashboard() {
                   }`}>
                   {activeSpecies.status}
                 </span>
+                <button 
+                  onClick={() => navigate(`/pipeline/${activeSpecies.name}`)}
+                  title="Deep Pipeline Analysis"
+                  className={`p-2 ${isDark ? 'bg-slate-800 text-slate-500' : 'bg-slate-100 text-slate-400'} rounded-xl hover:text-emerald-500 hover:bg-emerald-500/10 transition-all`}
+                >
+                  <BrainCircuit size={18} />
+                </button>
                 <button className={`p-2 ${isDark ? 'bg-slate-800 text-slate-500' : 'bg-slate-100 text-slate-400'} rounded-xl hover:text-emerald-500 transition-all`}><Activity size={18} /></button>
               </div>
               <h2 className={`text-5xl font-black ${theme.title} leading-none mb-2 tracking-tighter`}>{activeSpecies.name}</h2>
+
 
               <div className="flex items-baseline gap-2 mt-4 mb-2">
                 <span className="text-5xl font-black text-emerald-400 tracking-tighter drop-shadow-[0_0_10px_rgba(16,185,129,0.3)]">
@@ -1301,6 +1438,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/profile" element={<UserProfile />} />
+        <Route path="/pipeline/:speciesName" element={<PipelinePage />} />
       </Routes>
     </BrowserRouter>
   );

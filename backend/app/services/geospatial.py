@@ -8,6 +8,7 @@ from sqlmodel import Session, select
 from app.models.schemas import EnvironmentalData
 from app.models.db import engine, EnvironmentalCache, PlaceNameCache, EnvironmentalHistory
 import concurrent.futures
+import threading
 
 import os
 import json
@@ -182,8 +183,8 @@ class GeospatialService:
                     ndvi=ndvi,
                     evi=evi,
                     ndwi=ndwi,
-                    temp=28.0 + (year % 2), # Static approx for speed, user mainly cares about vegetation realism
-                    rain=1200.0 + (year * 10 % 100),
+                    temperature=28.0 + (year % 2), # Static approx for speed, user mainly cares about vegetation realism
+                    rainfall=1200.0 + (year * 10 % 100),
                     frp=5.0,
                     hdi=0.3,
                     nightlights=0.3 * 10 # HDI proxy
@@ -360,10 +361,15 @@ class GeospatialService:
                 # 6.6 High Fidelity History Reframing (Real Data Fetch)
                 # If we don't have historical records, fetch them back to 2021
                 hist_count = len(db_session.exec(select(EnvironmentalHistory).where(EnvironmentalHistory.h3_index == h3_index)).all())
-                if hist_count < 3: # If less than 3 points (including current), fetch the 5-year trend
-                    # We do this synchronously for the first fetch to ensure graphs have data
-                    # Parallel threads within will handle the speed.
-                    self.fetch_historical_telemetry(lat, lon, h3_index)
+                if hist_count < 3: 
+                    # Offload to background thread so we don't block the main API response
+                    print(f"DEBUG: Offloading Historical Fetch for {h3_index} to Background Thread")
+                    thread = threading.Thread(
+                        target=self.fetch_historical_telemetry, 
+                        args=(lat, lon, h3_index),
+                        daemon=True
+                    )
+                    thread.start()
                 
                 db_session.commit()
         except Exception as e:

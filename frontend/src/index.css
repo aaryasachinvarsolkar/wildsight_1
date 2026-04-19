@@ -77,3 +77,26 @@ body {
 .animate-fade-in {
   animation: fadeIn 0.5s ease-out forwards;
 }
+
+/* PREMIUM TOOLTIP STYLES */
+.leaflet-tooltip.ndvi-tooltip,
+.leaflet-tooltip.gbif-tooltip {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.leaflet-tooltip-top.gbif-tooltip:before {
+  border-top-color: rgba(244, 63, 94, 0.4) !important;
+}
+
+.ndvi-tooltip > div,
+.gbif-tooltip > div {
+  animation: tooltipEntrance 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes tooltipEntrance {
+  from { opacity: 0; transform: translateY(10px) scale(0.9); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}

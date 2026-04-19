@@ -9,7 +9,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 DB_PATH = os.path.join(BASE_DIR, "wildsight.db")
 DATABASE_URL = f"sqlite:///{DB_PATH}"
 
-engine = create_engine(DATABASE_URL, echo=False)
+engine = create_engine(
+    DATABASE_URL, 
+    echo=False, 
+    connect_args={"check_same_thread": False}
+)
 
 def get_session():
     with Session(engine) as session:
