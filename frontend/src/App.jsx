@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
 import UserProfile from './UserProfile';
 import PipelinePage from './PipelinePage';
+import EcoRangerPage from './EcoRangerPage';
 import axios from 'axios';
 import { MapContainer, TileLayer, Marker, Popup, CircleMarker, Rectangle, Tooltip as LeafletTooltip, useMap } from 'react-leaflet';
 import { Line, Bar } from 'react-chartjs-2';
@@ -29,6 +30,7 @@ import {
   List,
   Navigation,
   User,
+  Shield,
   X,
   FileText,
   Download,
@@ -1043,6 +1045,13 @@ function Dashboard() {
 
             <div className="flex items-center gap-4">
               <button
+                onClick={() => navigate('/eco-ranger')}
+                className={`px-4 py-3 rounded-2xl border transition-all inline-flex items-center gap-2 font-bold ${isDark ? 'bg-slate-800 border-slate-700 text-emerald-300 hover:bg-slate-700' : 'bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100'}`}
+              >
+                <Shield size={18} />
+                <span className="text-xs uppercase tracking-wider">Eco Ranger</span>
+              </button>
+              <button
                 onClick={() => setIsDark(!isDark)}
                 className={`p-3 rounded-2xl border transition-all ${isDark ? 'bg-slate-800 border-slate-700 text-yellow-400 hover:bg-slate-700' : 'bg-slate-100 border-slate-200 text-slate-600 hover:bg-white'}`}
                 title="Toggle Theme"
@@ -1439,6 +1448,7 @@ export default function App() {
         <Route path="/" element={<Dashboard />} />
         <Route path="/profile" element={<UserProfile />} />
         <Route path="/pipeline/:speciesName" element={<PipelinePage />} />
+        <Route path="/eco-ranger" element={<EcoRangerPage />} />
       </Routes>
     </BrowserRouter>
   );

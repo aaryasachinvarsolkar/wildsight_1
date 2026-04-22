@@ -1,0 +1,17 @@
+{
+  "expo": {
+    "name": "Eco Ranger",
+    "slug": "eco-ranger-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "android": {
+      "package": "com.wildsight.ecoranger",
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "CAMERA",
+        "RECORD_AUDIO"
+      ]
+    }
+  }
+}

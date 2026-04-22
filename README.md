@@ -1,66 +1,91 @@
-# EcoGuard: AI-Powered Biosphere Intelligence
+# WildSight + Eco Ranger
 
-EcoGuard is a next-generation conservation platform designed to monitor, analyze, and protect endangered species and their habitats. By integrating real-time satellite telemetry, global biodiversity data, and advanced AI simulations, EcoGuard provides conservationists with actionable insights into ecosystem health.
+This project has:
 
-## 🌟 Key Features
+- Core WildSight backend in `backend/`
+- Web frontend in `frontend/`
+- Mobile Eco Ranger app in `eco-ranger-mobile/`
 
-- **Real-Time Satellite Intel**: Integrates **Sentinel Hub** (NDVI, EVI, NDWI) and **NASA FIRMS** (Thermal Anomalies/Fire) data for granular habitat monitoring.
-- **Global Biodiversity Integration**: Anchored to **GBIF** (Global Biodiversity Information Facility) for real-time species occurrence and population tracking.
-- **AI-Powered Risk Engine**: Uses **Google Gemini AI** to model ecological constraints and predict extinction risks based on environmental stressors.
-- **Intelligence Pulse**: Visualizes 5-year population trends and ongoing ecosystem "pulse" monitoring via automated background telemetry fetching.
-- **Interactive Spatial Analytics**: H3-indexed habitat clustering for identifying biodiversity hotspots and critical conservation zones.
+## Run The App (Windows)
 
-## 🛠️ Tech Stack
+Open 3 terminals from project root `D:\Github\wildsight_1`.
 
-### Backend
-- **Framework**: FastAPI (Python)
-- **Database**: SQLite with SQLModel (ORM)
-- **Geospatial**: H3, Leaflet-compatible coordination
-- **AI**: Google Generative AI (Gemini 1.5 Flash)
+### 1) Start Backend (Terminal 1)
 
-### Frontend
-- **Framework**: React 18 with Vite
-- **Styling**: TailwindCSS 4
-- **Maps**: React-Leaflet
-- **Charts**: Chart.js
+```powershell
+Set-Location D:\Github\wildsight_1\backend
+$env:GOOGLE_API_KEY="<your_api_key>"
+D:\Github\wildsight_1\.venv\Scripts\python.exe -m uvicorn main:app --host 0.0.0.0 --port 8000
+```
 
-## 🚀 Getting Started
+Health check:
 
-### Prerequisites
-- Python 3.10+
-- Node.js 18+
-- API Keys for:
-  - Google Gemini AI (`GOOGLE_API_KEY`)
-  - Sentinel Hub (`SENTINEL_CLIENT_ID`, `SENTINEL_CLIENT_SECRET`)
-  - NASA FIRMS (`NASA_FIRMS_MAP_KEY`)
+```powershell
+Invoke-WebRequest -UseBasicParsing http://127.0.0.1:8000/api/v1/health
+```
 
-### Installation
+### 2) Start Web Dashboard (Terminal 2)
 
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/aaryasachinvarsolkar/wildsight_1.git
-   cd wildsight_1
-   ```
+```powershell
+Set-Location D:\Github\wildsight_1\frontend
+npm.cmd install
+npm.cmd run dev
+```
 
-2. **Backend Setup**:
-   ```bash
-   cd backend
-   pip install -r requirements.txt
-   # Ensure environment variables are set
-   python -m uvicorn main:app --port 8000
-   ```
+Open:
 
-3. **Frontend Setup**:
-   ```bash
-   cd ../frontend
-   npm install
-   npm run dev
-   ```
+- `http://localhost:5173`
+- Eco Ranger dashboard: `http://localhost:5173/eco-ranger`
 
-## 📈 Usage
-Navigate to `http://localhost:5173`. Enter the name of an endangered species (e.g., "Bengal Tiger" or "Indian Leopard") and click **SCAN BIOSPHERE**. The system will resolve the species identity, analyze its habitat, and generate a real-time risk assessment.
+### 3) Start Mobile App (Terminal 3)
 
-## 🛡️ Stability Note
-The platform includes background threading for telemetry fetching and multi-threaded SQLite access to ensure the UI remains responsive during heavy data processing cycles.
+```powershell
+Set-Location D:\Github\wildsight_1\eco-ranger-mobile
+npm.cmd install
+npm.cmd start
+```
+
+If testing on Android phone via USB:
+
+```powershell
+adb devices
+adb reverse tcp:8000 tcp:8000
+adb reverse tcp:8081 tcp:8081
+adb reverse --list
+```
+
+Open Expo Go on phone and load the shown `exp://...` URL.
+
+## Quick Test Flow
+
+1. On mobile, tap `Scan Species Image`.
+2. Capture an image and allow location permission.
+3. Verify result card appears on phone.
+4. Check the same scan in web dashboard map and ranger profiles.
+
+## Reset Eco Ranger Data (Optional)
+
+This clears only Eco Ranger tables (`RangerScan`, `SpeciesLog`, `ValidationRecord`):
+
+```powershell
+Set-Location D:\Github\wildsight_1\backend
+@'
+from sqlmodel import Session, delete
+from app.models.db import eco_ranger_engine, RangerScan, SpeciesLog, ValidationRecord
+
+with Session(eco_ranger_engine) as session:
+    session.exec(delete(ValidationRecord))
+    session.exec(delete(SpeciesLog))
+    session.exec(delete(RangerScan))
+    session.commit()
+print("Eco Ranger data cleared")
+'@ | D:\Github\wildsight_1\.venv\Scripts\python.exe -
+```
+
+## Common Fixes
+
+- If PowerShell blocks npm scripts, use `npm.cmd` instead of `npm`.
+- If mobile says network failed, verify backend is running and run `adb reverse` commands again.
+- If port 8000 or 5173 is busy, stop existing process and restart the service.
 
 
